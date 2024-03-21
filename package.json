@@ -1,0 +1,16 @@
+{
+  "name": "ict-itcs212-migaku-server",
+  "version": "1.0.0",
+  "description": "Express Server-Side",
+  "main": "program.js",
+  "scripts": {
+    "dev": "node program.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.0.0-beta.2",
+    "mysql2": "^3.9.2",
+    "routes": "^2.1.0"
+  }
+}
