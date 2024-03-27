@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
 
+/// Enable Body Parser
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
+
 // Add routes as needed
 // SAMPLE CODE
 // router.get('', (req, res) => {
