@@ -19,17 +19,19 @@ router.use(express.urlencoded({ extended: true }));
 //   });
 
 router.post('', (req,res) => {
-    const { courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status } = req.body
-    pool.query(`INSERT INTO Courses (courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status) 
-                VALUES ('${courseCode}', '${courseCat}', '${courseName}', '${courseDes}', ${courseDuration}, ${price},${TeacherId}, ${rating}, ${status})`, (error, results) => {
+    const { courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status } = req.body;
+    if(req.body === "" || courseCode === "" || courseCat === "" || courseName === "" || courseDes === "" || courseDuration === "" ||
+    price === "" || TeacherId === "" || rating === "" || status === "") return res.status(400).json({Message: "Missing Required Field(s)"})
+    pool.query(`INSERT INTO Courses (courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status)
+    VALUES ('${courseCode}', '${courseCat}', '${courseName}', '${courseDes}', '${courseDuration}', '${price}', '${TeacherId}', '${rating}', ${status})`, (error, results) => {
         if (error) {
             console.log(error)
             return res.status(500).json({
-                message : "Missing Required Field(s)"
+                Message : "Internal Server Error"
             })
         }
-        res.status(200).json({
-            message : "Course Created"
+        if(results) return res.status(201).json({
+            Message : "Course Created"
         })
     })
 })
