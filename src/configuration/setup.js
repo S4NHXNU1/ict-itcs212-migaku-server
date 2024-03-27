@@ -11,6 +11,11 @@ function setup(app)
     app.use('/api/auth', AuthRoutes);
     app.use('/api/user', UserRoutes);
     app.use('/api/course', CourseRoutes);
+    app.use((req, res, next) => {
+        res.status(404).json({
+            message: 'Route Not Found'
+        })
+    })
 }
 
 module.exports = setup
