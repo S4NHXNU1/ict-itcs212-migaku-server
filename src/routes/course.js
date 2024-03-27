@@ -19,8 +19,8 @@ router0.use(express.urlencoded({ extended: true }));
 //   });
 
 router.post('', (req,res) => {
-    const { courseId, courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status} = req.body
-    pool.query(`insert into <tablerName> values (${courseId}, ${courseCode}, ${courseCat}, ${courseName}, ${courseDes}, ${courseDuration}, ${TeacherId}, ${price}, ${rating}, ${status})`, (error, results) => {
+    const { courseId, courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status } = req.body
+    pool.query(`INSERT INTO <courseTable> VALUES (${courseId}, ${courseCode}, ${courseCat}, ${courseName}, ${courseDes}, ${courseDuration}, ${TeacherId}, ${price}, ${rating}, ${status})`, (error, results) => {
         if (error) {
             return res.status(500).json({
                 message : "Missing Required Field(s)"
