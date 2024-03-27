@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
 
-router.get('', (req, res) => {
-    const username = req.body?.Username;
-    const password = req.body?.Password;
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
+
+router.post('', (req, res) => {
+    const username = req.body?.username;
+    const password = req.body?.password;
 
     if(username === "" || password === "") return res.status(400).json({ Message: 'Missing Authorization Data' });
 
@@ -17,6 +20,7 @@ router.get('', (req, res) => {
       {
         if(results[0].username === username && results[0].password === password)
         {
+          res.cookie("UserId", `${results[0].userId}`);
           return res.status(200).json({ 
             Authorize: true,
             UserId: `${results[0].userId}`
