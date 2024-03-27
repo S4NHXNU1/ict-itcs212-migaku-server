@@ -20,7 +20,8 @@ router.use(express.urlencoded({ extended: true }));
 
 router.post('', (req,res) => {
     const { courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status } = req.body
-    pool.query(`INSERT INTO Courses (courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status) VALUES ('${courseCode}', '${courseCat}', '${courseName}', '${courseDes}', ${courseDuration}, ${price},${TeacherId}, ${rating}, ${status})`, (error, results) => {
+    pool.query(`INSERT INTO Courses (courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status) 
+                VALUES ('${courseCode}', '${courseCat}', '${courseName}', '${courseDes}', ${courseDuration}, ${price},${TeacherId}, ${rating}, ${status})`, (error, results) => {
         if (error) {
             console.log(error)
             return res.status(500).json({
