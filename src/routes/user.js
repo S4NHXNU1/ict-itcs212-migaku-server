@@ -3,8 +3,8 @@ const router = express.Router();
 const pool = require('../configuration/database');
 
 /// Enable Body Parser
-router0.use(express.json());
-router0.use(express.urlencoded({ extended: true }));
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 
 // Add routes as needed
 // SAMPLE CODE
@@ -18,10 +18,12 @@ router0.use(express.urlencoded({ extended: true }));
 //     });
 //   });
 
-router.put('/:userId', (req,res) => {
-    const id = req.params.userId
+router.put('', (req,res) => {
+    const id = parseInt(req.query.userId)
     const { FirstName, LastName, Email, username, password, role } = req.body
-    pool.query(`UPDATE <userTable> SET FirstName = ${FirstName}, LastName = ${LastName}, Email = ${Email}, username = ${username}, password = ${password}, role = ${role} WHERE userId = ${id}`,(error, results) => {
+    pool.query(`UPDATE Users 
+                SET FirstName = '${FirstName}', LastName = '${LastName}', Email = '${Email}', username = '${username}', password = '${password}', role = '${role}' 
+                WHERE userId = ${id}`,(error, results) => {
         if (error) {
             console.error(error);
             return res.status(500).json({ 
