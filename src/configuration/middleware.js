@@ -16,7 +16,8 @@ function middleware(req, res, next) {
             }
             if(results && results.length > 0)
             {
-                if(results[0].userId === userId) next();
+                console.log(results)
+                if(results[0].userId === Number(userId)) next();
                 else return res.status(403).json({ Message: "Invalid User Id" });
             }
             else return res.status(403).json({ Message: "Invalid User Id" });
