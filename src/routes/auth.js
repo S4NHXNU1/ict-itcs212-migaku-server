@@ -11,8 +11,8 @@ router.post('', (req, res) => {
 
     if(username === "" || password === "") return res.status(400).json({ Message: 'Missing Authorization Data' });
 
-    pool.query(`SELECT username, password, userId FROM Users where username = '${username}'`, (error, results) => {
-      if (error) {
+    pool.query(`SELECT username, password, userId FROM Users where username = '${username}' LIMIT 1`, (error, results) => {
+      if (error){
         console.error(error);
         return res.status(500).json({ message: 'Internal Server Error' });
       }
