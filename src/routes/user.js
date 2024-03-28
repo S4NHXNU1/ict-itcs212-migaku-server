@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
+const isUndefined = require('../utils/isUndefined');
 
 // Add routes as needed
 // SAMPLE CODE
@@ -37,18 +38,43 @@ router.put('', (req,res) => {
         if (error) {
             console.error(error);
             return res.status(500).json({ 
-                message: 'Internal Server Error' 
+                Message: 'Internal Server Error' 
             });
         }
         if (results.affectedRows === 0) {
             return res.status(404).json({
-                message : "No userId found"
+                Message : `No userId ${userId} found`
             })
         }
         res.status(200).json({
-            message : "User Updated"
+            Message : "User Updated"
         })
     })
+})
+
+router.delete('', (req,res) => {
+
+    if(isUndefined(req.query) || req.query === "" || isUndefined(req.query.userId) || req.query.userId === "")
+    return res.status(400).json({Message: "Missing Required Field"});
+
+    const userId = req.query.userId;
+    pool.query(`DELETE FROM Users WHERE userId = ${userId}`, (error,results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ 
+                Message: 'Internal Server Error' 
+            });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({
+                Message : `No userId ${userId} found`
+            })
+        }
+        else return res.status(200).json({
+            Message : "User Deleted"
+        })
+    })
+
 })
 
 module.exports = router;
