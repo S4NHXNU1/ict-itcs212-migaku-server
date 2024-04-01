@@ -36,4 +36,29 @@ router.post('', (req,res) => {
     })
 })
 
+router.delete('', (req,res) => {
+
+    if(isUndefined(req.query) || req.query === "" || isUndefined(req.query.courseId) || req.query.courseId === "")
+    return res.status(400).json({Message: "Missing Required Field"});
+
+    const courseId = req.query.courseId;
+    pool.query(`DELETE FROM Courses WHERE courseId = ${courseId}`, (error,results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ 
+                Message: 'Internal Server Error' 
+            });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({
+                Message : `No courseId ${courseId} found`
+            })
+        }
+        else return res.status(200).json({
+            Message : "Course Deleted"
+        })
+    })
+
+})
+
 module.exports = router;
