@@ -1,15 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
+const isUndefined = require('../utils/isUndefined');
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 router.post('', (req, res) => {
-  const username = req.body?.username;
-  const password = req.body?.password;
 
-  if(username === "" || password === "") return res.status(400).json({ Message: 'Missing Authorization Data' });
+  if(isUndefined(req.body)) return res.status(400).json({ Message: 'Missing Authorization Data' });
+
+  const username = req.body.username;
+  const password = req.body.password;
+
+  if(isUndefined(username) || isUndefined(password) || username === "" || password === "")
+    return res.status(400).json({ Message: 'Missing Authorization Data' });
 
   pool.query(`SELECT username, password, userId FROM Users where username = '${username}' LIMIT 1`, (error, results) => {
     if (error){

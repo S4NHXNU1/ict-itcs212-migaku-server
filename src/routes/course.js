@@ -20,9 +20,16 @@ router.use(express.urlencoded({ extended: true }));
 //   });
 
 router.post('', (req,res) => {
+
+    if (isUndefined(req.body) || req.body === "")
+        return res.status(400).json({Message: "Missing Required Field(s)"})
+
     const { courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status } = req.body;
-    if(req.body === "" || courseCode === "" || courseCat === "" || courseName === "" || courseDes === "" || courseDuration === "" ||
-    price === "" || TeacherId === "" || rating === "" || status === "") return res.status(400).json({Message: "Missing Required Field(s)"})
+
+    if(courseCode === "" || courseCat === "" || courseName === "" || courseDes === "" || courseDuration === "" ||
+    price === "" || TeacherId === "" || rating === "" || status === "")
+        return res.status(400).json({Message: "Missing Required Field(s)"})
+    
     pool.query(`INSERT INTO Courses (courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status)
     VALUES ('${courseCode}', '${courseCat}', '${courseName}', '${courseDes}', '${courseDuration}', '${price}', '${TeacherId}', '${rating}', ${status})`, (error, results) => {
         if (error) {
@@ -40,7 +47,7 @@ router.post('', (req,res) => {
 router.delete('', (req,res) => {
 
     if(isUndefined(req.query) || req.query === "" || isUndefined(req.query.courseId) || req.query.courseId === "")
-    return res.status(400).json({Message: "Missing Required Field"});
+        return res.status(400).json({Message: "Missing Required Field"});
 
     const courseId = req.query.courseId;
     pool.query(`DELETE FROM Courses WHERE courseId = ${courseId}`, (error,results) => {

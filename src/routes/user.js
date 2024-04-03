@@ -16,15 +16,13 @@ const isUndefined = require('../utils/isUndefined');
 //   });
 
 router.put('', (req,res) => {
-    if (req.query === "") {
-        res.status(400).json({Message: "Missing Required Field(s)"})
-    }
+    if (isUndefined(req.query) || req.query === "")
+        return res.status(400).json({Message: "Missing Required Field(s)"})
 
     const id = parseInt(req.query.userId)
     
-    if (req.body === "") {
-        res.status(400).json({Message: "Missing Required Field(s)"})
-    }
+    if (isUndefined(req.body) || req.body === "")
+        return res.status(400).json({Message: "Missing Required Field(s)"})
 
     const { FirstName, LastName, Email, username, password, role } = req.body
 
