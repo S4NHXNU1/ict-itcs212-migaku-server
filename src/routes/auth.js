@@ -25,7 +25,8 @@ router.post('', (req, res) => {
     {
       if(results[0].username === username && results[0].password === password)
       {
-        res.cookie("UserId", `${results[0].userId}`);
+        // Unused
+        // res.cookie("UserId", `${results[0].userId}`);
         return res.status(200).json({ 
           Authorize: true,
           UserId: `${results[0].userId}`
@@ -37,15 +38,16 @@ router.post('', (req, res) => {
   });
 });
 
-router.get('/logout', (req, res) => {
-  const cookie = req.cookies["UserId"];
-  if(cookie)
-  {
-    console.log(cookie);
-    res.clearCookie('your-cookie-name');
-    return res.status(200).json({ Message: "Logout Complete" });
-  }
-  else res.status(400).json({ Message: "No session is set"});
-});
+// Unused
+// router.get('/logout', (req, res) => {
+//   const cookie = req.cookies["UserId"];
+//   if(cookie)
+//   {
+//     console.log(cookie);
+//     res.clearCookie('UserId');
+//     return res.status(200).json({ Message: "Logout Complete" });
+//   }
+//   else res.status(400).json({ Message: "No session is set"});
+// });
 
 module.exports = router;
