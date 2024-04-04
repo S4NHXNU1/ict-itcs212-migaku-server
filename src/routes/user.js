@@ -14,6 +14,20 @@ const isUndefined = require('../utils/isUndefined');
 //       res.json(results);
 //     });
 //   });
+router.get('', (req,res) => {
+    var query = "select * from Users order by userId";
+    pool.query(query, function(error, data){
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ 
+                Message: 'Internal Server Error' 
+            });
+        }
+        else{
+            res.render('sample_data',{})
+        }
+    })
+})
 
 router.post('', (req, res) => {
     query = req.body;
