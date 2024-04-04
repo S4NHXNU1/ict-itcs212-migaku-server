@@ -26,9 +26,9 @@ router.put('', (req,res) => {
 
     const { FirstName, LastName, Email, username, password, role } = req.body
 
-    if (FirstName === "" || LastName === "" || Email === "" || username === "" || password === "" || role === "") {
-        res.status(400).json({Message: "Missing Required Field(s)"})
-    }
+    if (isUndefined(FirstName) || isUndefined(LastName) || isUndefined(Email) || isUndefined(username) || isUndefined(password) || isUndefined(role) ||
+    FirstName === "" || LastName === "" || Email === "" || username === "" || password === "" || role === "")
+        return res.status(400).json({Message: "Missing Required Field(s)"})
 
     pool.query(`UPDATE Users 
                 SET FirstName = '${FirstName}', LastName = '${LastName}', Email = '${Email}', username = '${username}', password = '${password}', role = '${role}' 
