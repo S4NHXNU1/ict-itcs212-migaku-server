@@ -16,7 +16,7 @@ router.post('', (req, res) => {
   if(isUndefined(username) || isUndefined(password) || username === "" || password === "")
     return res.status(400).json({ Message: 'Missing Authorization Data' });
 
-  pool.query(`SELECT username, password, userId FROM Users where username = '${username}' LIMIT 1`, (error, results) => {
+  pool.query(`SELECT username, password, userId, role FROM Users where username = '${username}' LIMIT 1`, (error, results) => {
     if (error){
       console.error(error);
       return res.status(500).json({ message: 'Internal Server Error' });
@@ -29,7 +29,8 @@ router.post('', (req, res) => {
         // res.cookie("UserId", `${results[0].userId}`);
         return res.status(200).json({ 
           Authorize: true,
-          UserId: `${results[0].userId}`
+          UserId: `${results[0].userId}`,
+          Role: `${results[0].role}`
         });
       }
       return res.status(401).json({ Authorize: false });
