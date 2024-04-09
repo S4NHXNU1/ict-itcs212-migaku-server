@@ -20,7 +20,7 @@ router.use(express.urlencoded({ extended: true }));
 //     });
 //   });
 
-router.get('/browse', (req, res) => {
+router.get('', (req, res) => {
     if (isUndefined(req.body)) {
         return res.status(400).json({
             Message: "Missing request body"
@@ -56,6 +56,37 @@ router.get('/browse', (req, res) => {
     }
     
     //console.log(query)
+
+    pool.query(query, (error, result) => {
+        if (error) {
+            console.log(error)
+            return res.status(500).json({
+                Message : "Internal Server Error"
+            })
+        }
+
+        if (result) {
+            return res.status(200).json(result)
+        }
+    })
+})
+
+router.get('/teacher', (req, res) => {
+    if (isUndefined(req.body)) {
+        return res.status(400).json({
+            Message: "Missing request body"
+        })
+    }
+
+    teacherId = req.body?.userId
+
+    if (isUndefined(teacherId)) {
+        return res.status(400).json({
+            Message: "Bad request"
+        })
+    }
+
+    query = `SELECT * from Courses WHERE teacherId = ${teacherId}`
 
     pool.query(query, (error, result) => {
         if (error) {
