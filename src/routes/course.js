@@ -168,6 +168,31 @@ router.post('', (req,res) => {
     })
 })
 
+router.put('', (req, res) => {
+    if (isUndefined(req.body)) {
+        return res.status(400).json({
+            Message: "Missing request body"
+        })
+    }
+
+    courseCode = req.body?.courseCodey
+    courseCat = req.body?.courseCat
+    courseName = req.body?.courseName
+    courseDes = req.body?.courseDes
+    courseDuration = req.body?.courseDuration
+    price = req.body?.price
+    courseStatus = req.body?.status
+    rating = req.body?.rating
+    teacherId = req.body?.teacherId
+    
+
+    if (isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
+        return res.status(400).json({
+            Message: "Bad request"
+        })
+    }
+})
+
 router.delete('', (req,res) => {
 
     if(isUndefined(req.query) || req.query === "" || isUndefined(req.query.courseId) || req.query.courseId === "")
