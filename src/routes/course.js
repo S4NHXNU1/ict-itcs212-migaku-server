@@ -23,22 +23,30 @@ router.use(express.urlencoded({ extended: true }));
 router.get('', (req, res) => {
     if (isUndefined(req.query)) {
         return res.status(400).json({
-            Message: "Missing request query"
+            Message: "Missing request query param(s)"
         })
     }
 
+    courseId = req.query?.courseId
     searchKey = req.query?.searchKey
     courseCat = req.query?.courseCat
     teacherName = req.query?.teacherName
 
-    if (isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
+    if (isUndefined(courseId) ||isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
         return res.status(400).json({
-            Message: "Bad request"
+            Message: "Missing request query param(s)"
         })
     }
 
     query = `SELECT c.courseId, c.courseCode, c.courseCat, c.courseName, c.courseDes, c.courseDuration, c.price, c.status, c.rating 
     FROM Courses c INNER JOIN Users u ON c.teacherId = u.userId`
+
+    if(!isEmpty(courseId)) {
+        query += ` WHERE c.courseId = ${courseId}`;
+        searchKey = "";
+        courseCat = "All";
+        teacherName = "";
+    }
     
     if (!isEmpty(searchKey) || !isEmpty(teacherName) || courseCat !== 'All') {
         query += ' WHERE '
@@ -64,74 +72,76 @@ router.get('', (req, res) => {
                 Message : "Internal Server Error"
             })
         }
-
-        if (result) {
-            return res.status(200).json(result)
+        if(result) {
+            if(result.length === 0) return res.status(404).json({
+                Message : "No courses found"
+            })
+            else return res.status(200).json(result)
         }
     })
 })
 
-router.get('/detail', (req, res) => {
-    if (isUndefined(req.query)) {
-        return res.status(400).json({
-            Message: "Missing request query"
-        })
-    }
+// router.get('/detail', (req, res) => {
+//     if (isUndefined(req.query)) {
+//         return res.status(400).json({
+//             Message: "Missing request query"
+//         })
+//     }
 
-    courseId = req.query?.courseId
+//     courseId = req.query?.courseId
 
-    if (isUndefined(courseId)) {
-        return res.status(400).json({
-            Message: "Bad request"
-        })
-    }
+//     if (isUndefined(courseId)) {
+//         return res.status(400).json({
+//             Message: "Bad request"
+//         })
+//     }
 
-    query = `SELECT * From Courses WHERE courseId = ${courseId}`
+//     query = `SELECT * From Courses WHERE courseId = ${courseId}`
     
-    pool.query(query, (error, result) => {
-        if (error) {
-            console.log(error)
-            return res.status(500).json({
-                Message : "Internal Server Error"
-            })
-        }
+//     pool.query(query, (error, result) => {
+//         if (error) {
+//             console.log(error)
+//             return res.status(500).json({
+//                 Message : "Internal Server Error"
+//             })
+//         }
 
-        if (result) {
-            return res.status(200).json(result)
-        }
-    })
-})
+//         if (result) {
+//             return res.status(200).json(result)
+//         }
+//     })
+// })
 
-router.get('/teacher', (req, res) => {
-    if (isUndefined(req.body)) {
-        return res.status(400).json({
-            Message: "Missing request body"
-        })
-    }
+// router.get('/teacher', (req, res) => {
+//     if (isUndefined(req.body)) {
+//         return res.status(400).json({
+//             Message: "Missing request body"
+//         })
+//     }
 
-    teacherId = req.body?.userId
+//     teacherId = req.body?.userId
 
-    if (isUndefined(teacherId)) {
-        return res.status(400).json({
-            Message: "Bad request"
-        })
-    }
+//     if (isUndefined(teacherId)) {
+//         return res.status(400).json({
+//             Message: "Bad request"
+//         })
+//     }
 
-    query = `SELECT * from Courses WHERE teacherId = ${teacherId}`
+//     query = `SELECT * from Courses WHERE teacherId = ${teacherId}`
 
-    pool.query(query, (error, result) => {
-        if (error) {
-            console.log(error)
-            return res.status(500).json({
-                Message : "Internal Server Error"
-            })
-        }
+//     pool.query(query, (error, result) => {
+//         if (error) {
+//             console.log(error)
+//             return res.status(500).json({
+//                 Message : "Internal Server Error"
+//             })
+//         }
 
-        if (result) {
-            return res.status(200).json(result)
-        }
-    })
-})
+//         if (result) {
+//             return res.status(200).json(result)
+//         }
+//     })
+// })
 
 router.post('', (req,res) => {
 
