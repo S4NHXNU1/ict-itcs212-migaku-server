@@ -23,13 +23,13 @@ router.use(express.urlencoded({ extended: true }));
 router.get('', (req, res) => {
     if (isUndefined(req.query)) {
         return res.status(400).json({
-            Message: "Missing request body"
+            Message: "Missing request query"
         })
     }
 
     searchKey = req.query?.searchKey
     courseCat = req.query?.courseCat
-    teacherName = req.query?.name
+    teacherName = req.query?.teacherName
 
     if (isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
         return res.status(400).json({
@@ -57,6 +57,37 @@ router.get('', (req, res) => {
     
     //console.log(query)
 
+    pool.query(query, (error, result) => {
+        if (error) {
+            console.log(error)
+            return res.status(500).json({
+                Message : "Internal Server Error"
+            })
+        }
+
+        if (result) {
+            return res.status(200).json(result)
+        }
+    })
+})
+
+router.get('/detail', (req, res) => {
+    if (isUndefined(req.query)) {
+        return res.status(400).json({
+            Message: "Missing request query"
+        })
+    }
+
+    courseId = req.query?.courseId
+
+    if (isUndefined(courseId)) {
+        return res.status(400).json({
+            Message: "Bad request"
+        })
+    }
+
+    query = `SELECT * From Courses WHERE courseId = ${courseId}`
+    
     pool.query(query, (error, result) => {
         if (error) {
             console.log(error)
