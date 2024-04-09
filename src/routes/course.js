@@ -21,15 +21,15 @@ router.use(express.urlencoded({ extended: true }));
 //   });
 
 router.get('', (req, res) => {
-    if (isUndefined(req.body)) {
+    if (isUndefined(req.query)) {
         return res.status(400).json({
             Message: "Missing request body"
         })
     }
 
-    searchKey = req.body?.searchKey
-    courseCat = req.body?.courseCat
-    teacherName = req.body?.name
+    searchKey = req.query?.searchKey
+    courseCat = req.query?.courseCat
+    teacherName = req.query?.name
 
     if (isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
         return res.status(400).json({
