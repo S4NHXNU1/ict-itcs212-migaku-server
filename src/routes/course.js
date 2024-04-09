@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
 const isUndefined = require('../utils/isUndefined');
+const validateData = require('../utils/validateData');
 
 /// Enable BodyParser
 router.use(express.json());
@@ -45,28 +46,50 @@ router.post('', (req,res) => {
 })
 
 router.put('', (req, res) => {
+    const requiredFields = ["courseId", "courseCode", "courseCat", "courseName", "courseDes", "courseDuration", "price", "status", "rating"]
+
     if (isUndefined(req.body)) {
         return res.status(400).json({
             Message: "Missing request body"
         })
     }
-
-    courseCode = req.body?.courseCodey
-    courseCat = req.body?.courseCat
-    courseName = req.body?.courseName
-    courseDes = req.body?.courseDes
-    courseDuration = req.body?.courseDuration
-    price = req.body?.price
-    courseStatus = req.body?.status
-    rating = req.body?.rating
-    teacherId = req.body?.teacherId
     
-
-    if (isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
+    if (!validateData(requiredFields, req.body)) {
         return res.status(400).json({
-            Message: "Bad request"
+            Message: "Bad Request"
         })
     }
+    
+    courseId = req.body.courseId
+    courseCode = req.body.courseCode
+    courseCat = req.body.courseCat
+    courseName = req.body.courseName
+    courseDes = req.body.courseDes
+    courseDuration = req.body.courseDuration
+    price = req.body.price
+    courseStatus = req.body.status
+    rating = req.body.rating
+    teacherId = req.body.teacherId
+
+    pool.query(`UPDATE Courses
+    SET courseName = '${courseName}', courseDes = '${courseDes}', courseCat = '${courseCat}', 
+        price = '${price}', status = ${courseStatus}, rating = ${rating}, teacherId = ${teacherId}
+    WHERE courseId = ${courseId}`, (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ 
+                message: 'Internal Server Error' 
+            });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({
+                Message : `No courseId ${courseId} found`
+            })
+        }
+        else return res.status(200).json({
+            Message : "Course Updated"
+        })
+    })
 })
 
 router.delete('', (req,res) => {
