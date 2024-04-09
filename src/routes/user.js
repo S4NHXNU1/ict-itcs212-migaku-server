@@ -14,6 +14,24 @@ const pool = require('../configuration/database');
 //     });
 //   });
 
+router.post('', (req, res) => {
+    query = req.body;
+    if (!query) return res.status(400).json({Message: "Missing request body"})
+    const { username, password, email, firstName, lastName, role } = query;
+    if (!username || !password || !email || !firstName || !lastName || !role ) return res.status(400).json({Message: "Incomplete field(s)"})  
+    
+    pool.query
+    (`INSERT INTO Users (username, password, email, firstName, lastName, role)
+    VALUES ('${username}', '${password}', '${email}', '${firstName}', '${lastName}', '${role}');`, 
+    (error) => {
+        if (error) {
+            console.log(error)
+            return res.status(500).json({Message: 'Internal Server Error'})
+        }
+        return res.status(201).json({Message: "User Created"})
+    })
+})
+
 router.put('', (req,res) => {
     if (req.query === "") {
         res.status(400).json({Message: "Missing Required Field(s)"})
