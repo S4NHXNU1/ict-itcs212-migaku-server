@@ -15,7 +15,7 @@ const isUndefined = require('../utils/isUndefined');
 //     });
 //   });
 router.get('', (req,res) => {
-    var query = "select * from Users order by userId";
+    var query = "SELECT * FROM Users ORDER BY userId";
     pool.query(query, function(error, data){
         if (error) {
             console.error(error);
@@ -23,9 +23,11 @@ router.get('', (req,res) => {
                 Message: 'Internal Server Error' 
             });
         }
-        else{
-            res.render('sample_data',{})
-        }
+        if(data.length === 0)
+            return res.status(404).json({
+                Message : "No user(s) found"
+            });
+        else return res.status(200).json(data);
     })
 })
 
