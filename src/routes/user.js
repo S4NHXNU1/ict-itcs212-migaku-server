@@ -14,6 +14,22 @@ const isUndefined = require('../utils/isUndefined');
 //       res.json(results);
 //     });
 //   });
+router.get('', (req,res) => {
+    var query = "SELECT * FROM Users ORDER BY userId";
+    pool.query(query, function(error, data){
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ 
+                Message: 'Internal Server Error' 
+            });
+        }
+        if(data.length === 0)
+            return res.status(404).json({
+                Message : "No user(s) found"
+            });
+        else return res.status(200).json(data);
+    })
+})
 
 router.post('', (req, res) => {
     query = req.body;
