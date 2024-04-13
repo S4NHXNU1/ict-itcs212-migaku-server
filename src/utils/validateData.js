@@ -1,6 +1,8 @@
-function validateData(requiredFields, reqBody) {
-    for (let field in requiredFields) {
-        if (!(field in reqBody)) {
+function validateData(requiredFields, reqContext) {
+    if(!reqContext) return false
+    for (let i = 0; i < requiredFields.length; i++){
+        var field = requiredFields[i]
+        if (!(reqContext[field])) {
             return false
         }
     }

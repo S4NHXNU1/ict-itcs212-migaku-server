@@ -169,34 +169,21 @@ router.post('', (req,res) => {
 })
 
 router.put('', (req, res) => {
-    const requiredFields = ["courseId", "courseCode", "courseCat", "courseName", "courseDes", "courseDuration", "price", "status", "rating"]
-
-    if (isUndefined(req.body)) {
+    const requiredBody = ["courseCode", "courseCat", "courseName", "courseDes", "courseDuration", "price", "status", "rating"]
+    const requriedQuery = ["courseId"]
+    
+    if (!validateData(requiredBody, req.body) || !validateData(requriedQuery, req.query)) {
         return res.status(400).json({
-            Message: "Missing request body"
+            Message: "Missing required field(s)"
         })
     }
     
-    if (!validateData(requiredFields, req.body)) {
-        return res.status(400).json({
-            Message: "Bad Request"
-        })
-    }
-    
-    courseId = req.body.courseId
-    courseCode = req.body.courseCode
-    courseCat = req.body.courseCat
-    courseName = req.body.courseName
-    courseDes = req.body.courseDes
-    courseDuration = req.body.courseDuration
-    price = req.body.price
-    courseStatus = req.body.status
-    rating = req.body.rating
-    teacherId = req.body.teacherId
+    const courseId = req.query.courseId
+    const { courseCode, courseCat, courseName, courseDes, courseDuration, price, rating, status } = req.body;
 
-    pool.query(`UPDATE Courses
-    SET courseName = '${courseName}', courseDes = '${courseDes}', courseCat = '${courseCat}', 
-        price = '${price}', status = ${courseStatus}, rating = ${rating}, teacherId = ${teacherId}
+    pool.query(`UPDATE Courses SET 
+    courseCode = '${courseCode}', courseName = '${courseName}', courseDes = '${courseDes}', courseDuration = '${courseDuration}', 
+    courseCat = '${courseCat}', price = '${price}', status = ${status}, rating = ${rating} 
     WHERE courseId = ${courseId}`, (error, results) => {
         if (error) {
             console.error(error);
