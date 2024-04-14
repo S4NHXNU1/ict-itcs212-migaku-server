@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
 const isUndefined = require('../utils/isUndefined');
-const isEmpty = require('../utils/isEmpty')
+const validateData = require('../utils/validateData');
 
 /// Enable BodyParser
 router.use(express.json());
@@ -164,6 +164,40 @@ router.post('', (req,res) => {
         }
         if(results) return res.status(201).json({
             Message : "Course Created"
+        })
+    })
+})
+
+router.put('', (req, res) => {
+    const requiredBody = ["courseCode", "courseCat", "courseName", "courseDes", "courseDuration", "price", "status", "rating"]
+    const requriedQuery = ["courseId"]
+    
+    if (!validateData(requiredBody, req.body) || !validateData(requriedQuery, req.query)) {
+        return res.status(400).json({
+            Message: "Missing required field(s)"
+        })
+    }
+    
+    const courseId = req.query.courseId
+    const { courseCode, courseCat, courseName, courseDes, courseDuration, price, rating, status } = req.body;
+
+    pool.query(`UPDATE Courses SET 
+    courseCode = '${courseCode}', courseName = '${courseName}', courseDes = '${courseDes}', courseDuration = '${courseDuration}', 
+    courseCat = '${courseCat}', price = '${price}', status = ${status}, rating = ${rating} 
+    WHERE courseId = ${courseId}`, (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ 
+                message: 'Internal Server Error' 
+            });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({
+                Message : `No courseId ${courseId} found`
+            })
+        }
+        else return res.status(200).json({
+            Message : "Course Updated"
         })
     })
 })
