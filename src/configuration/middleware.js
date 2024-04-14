@@ -1,5 +1,5 @@
 const pool = require('../configuration/database');
-const isUndefined = require('../utils/isUndefined');
+const validateData = require('../utils/validateData');
 
 function middleware(req, res, next) {
     // Middleware logics go here
@@ -7,7 +7,8 @@ function middleware(req, res, next) {
     else
     {
         //console.log('Custom Middleware');
-        if(isUndefined(req.headers) || req.headers === "" || isUndefined(req.headers.authorization) || req.headers.authorization === "")
+        const requiredHeader = ["authorization"];
+        if(!validateData(requiredHeader, req.headers))
             return res.status(400).json({ Message: "There’s no authorization header attached" });
         const userId = req.headers.authorization;
         pool.query(`SELECT userId FROM Users WHERE userId = '${userId}' LIMIT 1`, (error, results) => {

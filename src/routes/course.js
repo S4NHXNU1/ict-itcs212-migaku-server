@@ -21,18 +21,15 @@ router.use(express.urlencoded({ extended: true }));
 //   });
 
 router.get('', (req, res) => {
-    if (isUndefined(req.query)) {
+    if (!req.query) {
         return res.status(400).json({
             Message: "Missing request query param(s)"
         })
     }
 
-    courseId = req.query?.courseId
-    searchKey = req.query?.searchKey
-    courseCat = req.query?.courseCat
-    teacherName = req.query?.teacherName
+    const { courseId, searchKey, courseCat, teacherName } = req.query
 
-    if (isUndefined(courseId) ||isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
+    if (isUndefined(courseId) || isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
         return res.status(400).json({
             Message: "Missing request query param(s)"
         })
@@ -41,23 +38,23 @@ router.get('', (req, res) => {
     query = `SELECT c.courseId, c.courseCode, c.courseCat, c.courseName, c.courseDes, c.courseDuration, c.price, c.status, c.rating 
     FROM Courses c INNER JOIN Users u ON c.teacherId = u.userId`
 
-    if(!isEmpty(courseId)) {
+    if(courseId) {
         query += ` WHERE c.courseId = ${courseId}`;
         searchKey = "";
         courseCat = "All";
         teacherName = "";
     }
     
-    if (!isEmpty(searchKey) || !isEmpty(teacherName) || courseCat !== 'All') {
+    if (searchKey || teacherName || courseCat !== 'All') {
         query += ' WHERE '
         conditionsArr = []
-        if (!isEmpty(searchKey)) {
-            conditionsArr.push(`c.courseName LIKE '%${searchKey}%'`)
+        if (searchKey) {
+            conditionsArr.push(`c.courseName LIKE '%${searchKey}%' OR c.courseCode LIKE '%${searchKey}%'`)
         }
         if (courseCat !== 'All') {
             conditionsArr.push(`c.courseCat = '${courseCat}'`)
         }
-        if (!isEmpty(teacherName)) {
+        if (teacherName) {
             conditionsArr.push(`CONCAT(u.firstName, " ", u.lastName) LIKE '%${teacherName}%'`)
         }
         query += conditionsArr.join(" AND ")
@@ -144,16 +141,12 @@ router.get('', (req, res) => {
 // })
 
 router.post('', (req,res) => {
-
-    if (isUndefined(req.body) || req.body === "")
+    const requiredBody = ["courseCode", "courseCat", "courseName", "courseDes", "courseDuration", "price", "TeacherId", "rating", "status"];
+    if (!validateData(requiredBody, req.body))
         return res.status(400).json({Message: "Missing Required Field(s)"})
 
     const { courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status } = req.body;
 
-    if(courseCode === "" || courseCat === "" || courseName === "" || courseDes === "" || courseDuration === "" ||
-    price === "" || TeacherId === "" || rating === "" || status === "")
-        return res.status(400).json({Message: "Missing Required Field(s)"})
-    
     pool.query(`INSERT INTO Courses (courseCode, courseCat, courseName, courseDes, courseDuration, price, TeacherId, rating, status)
     VALUES ('${courseCode}', '${courseCat}', '${courseName}', '${courseDes}', '${courseDuration}', '${price}', '${TeacherId}', '${rating}', ${status})`, (error, results) => {
         if (error) {
@@ -171,7 +164,6 @@ router.post('', (req,res) => {
 router.put('', (req, res) => {
     const requiredBody = ["courseCode", "courseCat", "courseName", "courseDes", "courseDuration", "price", "status", "rating"]
     const requriedQuery = ["courseId"]
-    
     if (!validateData(requiredBody, req.body) || !validateData(requriedQuery, req.query)) {
         return res.status(400).json({
             Message: "Missing required field(s)"
@@ -203,8 +195,8 @@ router.put('', (req, res) => {
 })
 
 router.delete('', (req,res) => {
-
-    if(isUndefined(req.query) || req.query === "" || isUndefined(req.query.courseId) || req.query.courseId === "")
+    const requriedQuery = ["courseId"]
+    if(!validateData(requriedQuery, req.query))
         return res.status(400).json({Message: "Missing Required Field"});
 
     const courseId = req.query.courseId;
