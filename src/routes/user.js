@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
-const isUndefined = require('../utils/isUndefined');
+const validateData = require('../utils/validateData');
 
 // Add routes as needed
 // SAMPLE CODE
@@ -32,13 +32,12 @@ router.get('', (req,res) => {
 })
 
 router.post('', (req, res) => {
-    query = req.body;
-    if (!query) return res.status(400).json({Message: "Missing request body"})
-    const { username, password, email, firstName, lastName, role } = query;
-    if (!username || !password || !email || !firstName || !lastName || !role ) return res.status(400).json({Message: "Incomplete field(s)"})  
-    
-    pool.query
-    (`INSERT INTO Users (username, password, email, firstName, lastName, role)
+    const requiredBody = ["username", "password", "email", "firstName", "lastName", "role"];
+    if (!validateData(requiredBody, req.body)) return res.status(400).json({Message: "Missing request body"})
+
+    const { username, password, email, firstName, lastName, role } = req.body;
+
+    pool.query(`INSERT INTO Users (username, password, email, firstName, lastName, role)
     VALUES ('${username}', '${password}', '${email}', '${firstName}', '${lastName}', '${role}');`, 
     (error) => {
         if (error) {
@@ -50,23 +49,17 @@ router.post('', (req, res) => {
 })
 
 router.put('', (req,res) => {
-    if (isUndefined(req.query) || req.query === "")
+    const requriedQuery = ["userId"]
+    const requiredBody = ["firstName", "lastName", "email", "username", "password", "role"];
+    if (!validateData(requriedQuery, req.query) || !validateData(requiredBody, req.body))
         return res.status(400).json({Message: "Missing Required Field(s)"})
 
-    const id = parseInt(req.query.userId)
-    
-    if (isUndefined(req.body) || req.body === "")
-        return res.status(400).json({Message: "Missing Required Field(s)"})
-
-    const { FirstName, LastName, Email, username, password, role } = req.body
-
-    if (isUndefined(FirstName) || isUndefined(LastName) || isUndefined(Email) || isUndefined(username) || isUndefined(password) || isUndefined(role) ||
-    FirstName === "" || LastName === "" || Email === "" || username === "" || password === "" || role === "")
-        return res.status(400).json({Message: "Missing Required Field(s)"})
+    const userId = parseInt(req.query.userId)
+    const { firstName, lastName, email, username, password, role } = req.body
 
     pool.query(`UPDATE Users 
-                SET FirstName = '${FirstName}', LastName = '${LastName}', Email = '${Email}', username = '${username}', password = '${password}', role = '${role}' 
-                WHERE userId = ${id}`,(error, results) => {
+                SET FirstName = '${firstName}', LastName = '${lastName}', Email = '${email}', username = '${username}', password = '${password}', role = '${role}' 
+                WHERE userId = ${userId}`,(error, results) => {
         if (error) {
             console.error(error);
             return res.status(500).json({ 
@@ -85,8 +78,8 @@ router.put('', (req,res) => {
 })
 
 router.delete('', (req,res) => {
-
-    if(isUndefined(req.query) || req.query === "" || isUndefined(req.query.userId) || req.query.userId === "")
+    const requriedQuery = ["userId"]
+    if(!validateData(requriedQuery, req.query))
     return res.status(400).json({Message: "Missing Required Field"});
 
     const userId = req.query.userId;
