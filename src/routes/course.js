@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../configuration/database');
 const isUndefined = require('../utils/isUndefined');
+const isEmpty = require('../utils/isEmpty')
 const validateData = require('../utils/validateData');
 
 /// Enable BodyParser
