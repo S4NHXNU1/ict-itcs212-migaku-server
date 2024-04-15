@@ -27,7 +27,7 @@ router.get('', (req, res) => {
         })
     }
 
-    const { courseId, searchKey, courseCat, teacherName } = req.query
+    var { courseId, searchKey, courseCat, teacherName } = req.query
 
     if (isUndefined(courseId) || isUndefined(searchKey) || isUndefined(courseCat) || isUndefined(teacherName)) {
         return res.status(400).json({
@@ -35,8 +35,8 @@ router.get('', (req, res) => {
         })
     }
 
-    query = `SELECT c.courseId, c.courseCode, c.courseCat, c.courseName, c.courseDes, c.courseDuration, c.price, c.status, c.rating 
-    FROM Courses c INNER JOIN Users u ON c.teacherId = u.userId`
+    query = `SELECT c.courseId, c.courseCode, c.courseCat, c.courseName, c.courseDes, c.courseDuration, c.price, c.status, c.rating,
+    CONCAT(u.FirstName, " ", u.lastName) AS teacherName FROM Courses c INNER JOIN Users u ON c.teacherId = u.userId`
 
     if(courseId) {
         query += ` WHERE c.courseId = ${courseId}`;
