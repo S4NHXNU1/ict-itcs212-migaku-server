@@ -3,7 +3,7 @@ const validateData = require('../utils/validateData');
 
 function middleware(req, res, next) {
     // Middleware logics go here
-    if(req.url === '/api/auth' || req.url === '/api/auth/logout') next();
+    if(req.url === '/api/auth' || req.url === '/api/auth/logout' || (req.method === "GET" && req.url.includes('/api/course'))) next();
     else
     {
         //console.log('Custom Middleware');
