@@ -2,11 +2,9 @@ const pool = require('../configuration/database');
 const validateData = require('../utils/validateData');
 
 function middleware(req, res, next) {
-    // Middleware logics go here
     if(req.url === '/api/auth' || req.url === '/api/auth/logout' || (req.method === "GET" && req.url.includes('/api/course'))) next();
     else
     {
-        //console.log('Custom Middleware');
         const requiredHeader = ["authorization"];
         if(!validateData(requiredHeader, req.headers))
             return res.status(400).json({ Message: "There’s no authorization header attached" });
@@ -18,7 +16,6 @@ function middleware(req, res, next) {
             }
             if(results && results.length > 0)
             {
-                //console.log(results)
                 if(results[0].userId === Number(userId)) next();
                 else return res.status(403).json({ Message: "Invalid User Id" });
             }
