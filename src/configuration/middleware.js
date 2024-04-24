@@ -2,7 +2,7 @@ const pool = require('../configuration/database');
 const validateData = require('../utils/validateData');
 
 function middleware(req, res, next) {
-    if(req.url === '/api/auth' || req.url === '/api/auth/logout' || (req.method === "GET" && req.url.includes('/api/course'))) next();
+    if(req.url === '/api/auth' || (req.method === "GET" && req.url.includes('/api/course'))) next();
     else
     {
         const requiredHeader = ["authorization"];

@@ -11,7 +11,7 @@ router.post('', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  pool.query(`SELECT username, password, userId, role FROM Users where username = '${username}' LIMIT 1`, (error, results) => {
+  pool.query(`SELECT username, password, userId, role FROM Users WHERE username = '${username}' AND password = '${password}' LIMIT 1`, (error, results) => {
     if (error){
       console.error(error);
       return res.status(500).json({ message: 'Internal Server Error' });
